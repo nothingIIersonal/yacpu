@@ -15,9 +15,11 @@
 `define STACK_MEM_SIZE       64                    // 9x64, stack mem                            // in cells
 `define OPCODE_WIDTH          5                    // operation width                            // in bits 
 
+                                                   // All 'REG*' entries below refers to GP_REG_FILE (or to explicit specified register, e.g. SP).
+                                                   // Other memory is data memory.
 `define NOP_cmd               0                    // nop                                 : NOP
 `define MOV_cmd               1                    // mov REG, $op                        : REG                  <- $op
-`define READL_cmd             2                    // readl REG, [$BASE + $OFFSET]        : REG                  <- [$BASE + OFFSET]
+`define READL_cmd             2                    // readl REG, [$BASE + $OFFSET]        : REG                  <- [$BASE + $OFFSET]
 `define READR_cmd             3                    // readr REG, [$BASE + REG_OFFSET]     : REG                  <- [$BASE + REG_OFFSET]
 `define LOADR_cmd             4                    // loadr [$BASE + REG_OFFSET], REG     : [$BASE + REG_OFFSET] <- REG
 `define LOADL_cmd             5                    // loadl [$BASE + $OFFSET], $LIT       : [$BASE + $OFFSET]    <- $LIT
@@ -35,10 +37,10 @@
 `define TINEQ_cmd            12                    // tineq REG_1, REG_2, REG_3           : %tq                  <- REG_1, REG_2 and REG_3 form triangle ? 1 : 0
 `define PUSHR_cmd            13                    // pushr REG                           : [SP]                 <- REG
                                                    //                                     : SP                   <- SP + 1
-`define PUSHL_cmd            14                    // pushr $LIT                          : [SP]                 <- $LIT
+`define PUSHL_cmd            14                    // pushl $LIT                          : [SP]                 <- $LIT
                                                    //                                     : SP                   <- SP + 1
-`define POP_cmd              15                    // pop REG                             : [SP - 1]             <- 0
-                                                   //                                     : REG                  <- SP - 1
+`define POP_cmd              15                    // pop REG                             : REG                  <- [SP - 1]
+                                                   //                                     : [SP - 1]             <- 0
                                                    //                                     : SP                   <- SP - 1
 `define FJMP_cmd             16                    // fjmp .label, %flag                  : PC                   <- %flag ? .label : PC + 1
 `define FNJMP_cmd            17                    // fnjmp .label, %flag                 : PC                   <- %flag ? PC + 1 : .label
@@ -53,7 +55,7 @@
                                                    //                                     : in_uart_data         <- (UART -> CPU) UART writes data to this bus
                                                    //                                     : out_uart_received    <- (CPU -> UART) '1' if CPU took data
 `define USEND_cmd            22                    // usend REG                           : in_uart_transmitted  <- (UART -> CPU) '1' if UART sent data
-                                                   //                                     : out_uart_tx_data        <- (CPU -> UART) CPU writes data to this bus
+                                                   //                                     : out_uart_tx_data     <- (CPU -> UART) CPU writes data to this bus
                                                    //                                     : out_uart_transmit    <- (CPU -> UART) '1' if CPU want to send data
 `define HALT_cmd             23                    // halt
 
